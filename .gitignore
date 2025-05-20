@@ -1,0 +1,32 @@
+# 忽略 Qt Creator 的用户设置和临时文件
+*.user
+*.pro.user
+*.qmake.stash
+*.autosave
+
+# 忽略构建生成的文件
+*.o
+*.obj
+*.exe
+*.log
+*.dll
+*.so
+*.a
+*.pro.user
+
+
+# 忽略 build 临时目录（如 build-xxx）
+build*/
+debug/
+release/
+
+# 忽略 Mac 或 Linux 特有系统文件
+.DS_Store
+
+# Visual Studio 项目兼容（如果导入过）
+*.sln
+*.vcxproj*
+*.layout
+
+# Qt Creator CMake 缓存（如果启用）
+CMakeLists.txt.user*
