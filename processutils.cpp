@@ -2,6 +2,8 @@
 #define _WIN32_WINNT 0x0600
 
 #include "processutils.h"
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <windows.h>
 #include <psapi.h>
 #include <shellapi.h>
@@ -9,6 +11,11 @@
 #include <QFileInfo>
 #include <QPixmap>
 #include <QtWin>
+#include <iphlpapi.h>
+#pragma comment(lib, "iphlpapi.lib")
+
+#include <map>
+
 
 bool terminateProcess(int pid) {
     HANDLE h = OpenProcess(PROCESS_TERMINATE, FALSE, pid);
@@ -42,7 +49,24 @@ QIcon extractIcon(const WCHAR *exePath) {
 double getFakeCPUUsage(int /*pid*/) {
     return qrand() % 100 / 10.0;
 }
+// 获取每个进程拥有的 TCP 连接数
+std::map<DWORD, int> getTcpConnectionCounts() {
+    std::map<DWORD, int> result;
 
+    DWORD size = 0;
+    GetExtendedTcpTable(nullptr, &size, TRUE, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0);
+    auto buffer = (PMIB_TCPTABLE_OWNER_PID)malloc(size);
+
+    if (GetExtendedTcpTable(buffer, &size, TRUE, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0) == NO_ERROR) {
+        for (DWORD i = 0; i < buffer->dwNumEntries; ++i) {
+            DWORD pid = buffer->table[i].dwOwningPid;
+            result[pid]++;
+        }
+    }
+
+    free(buffer);
+    return result;
+}
 
 
 

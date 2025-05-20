@@ -32,3 +32,4 @@ LIBS += -lPsapi -lUser32
 DISTFILES += \
     style.qss
 QT += winextras
+LIBS += -liphlpapi -lws2_32 -lpsapi

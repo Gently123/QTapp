@@ -15,6 +15,10 @@ void ProcessFetcher::run() {
 
     while (!isInterruptionRequested()) {
         QList<ProcessInfo> list;
+
+        // 🔥 获取每个进程的 TCP 连接数映射
+        auto tcpMap = getTcpConnectionCounts();
+
         HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
         if (snap == INVALID_HANDLE_VALUE) {
             qDebug() << "Failed to create process snapshot.";
@@ -32,13 +36,14 @@ void ProcessFetcher::run() {
                 info.status = "Running";  // 默认 Running
                 info.threads = pe.cntThreads;
 
+                // 🔥 设置该进程的 TCP 连接数
+                info.tcpConnections = tcpMap[info.pid];
+
                 HANDLE h = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_VM_READ, FALSE, pe.th32ProcessID);
                 if (h) {
-                    // 优先级
                     DWORD pri = GetPriorityClass(h);
                     info.priorityClass = (pri == 0) ? -1 : static_cast<int>(pri);
 
-                    // 内存
                     PROCESS_MEMORY_COUNTERS pmc;
                     if (GetProcessMemoryInfo(h, &pmc, sizeof(pmc))) {
                         info.memory = pmc.WorkingSetSize / 1024.0 / 1024.0;
@@ -46,16 +51,13 @@ void ProcessFetcher::run() {
                         info.memory = 0;
                     }
 
-                    // 路径 → 图标
                     WCHAR fullPath[MAX_PATH];
                     DWORD len = MAX_PATH;
                     if (QueryFullProcessImageNameW(h, 0, fullPath, &len)) {
                         info.icon = extractIcon(fullPath);
                     }
 
-                    // 假 CPU 占用
                     info.cpu = getFakeCPUUsage(info.pid);
-
                     CloseHandle(h);
                 } else {
                     info.priorityClass = -1;
@@ -75,5 +77,6 @@ void ProcessFetcher::run() {
         sleep(1);
     }
 }
+
 
 

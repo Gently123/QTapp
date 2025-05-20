@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setupTable();
     qRegisterMetaType<QList<ProcessInfo>>("QList<ProcessInfo>");
+    resize(1050, 600);  // 设置初始窗口宽度和高度
 
     // 搜索框连接
     connect(ui->lineEdit, &QLineEdit::textChanged,
@@ -34,9 +35,9 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 void MainWindow::setupTable() {
-    ui->tableWidget->setColumnCount(8);
+    ui->tableWidget->setColumnCount(9);
     ui->tableWidget->setHorizontalHeaderLabels({
-        "图标", "进程名", "PID", "状态", "CPU%", "内存(MB)", "线程数", "优先级"
+        "图标", "进程名", "PID", "状态", "CPU%", "内存(MB)", "线程数", "优先级","网络连接数"
     });
 
     ui->tableWidget->setColumnWidth(0, 32); // 图标列窄一点
@@ -73,6 +74,8 @@ void MainWindow::updateProcessTable(const QList<ProcessInfo> &list) {
         ui->tableWidget->setItem(row, 5, new QTableWidgetItem(QString::number(info.memory, 'f', 1)));
         ui->tableWidget->setItem(row, 6, new QTableWidgetItem(QString::number(info.threads)));
         ui->tableWidget->setItem(row, 7, new QTableWidgetItem(QString::number(info.priorityClass)));
+        ui->tableWidget->setItem(row, 8, new QTableWidgetItem(QString::number(info.tcpConnections)));
+
 
     }
 }

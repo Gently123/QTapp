@@ -3,6 +3,9 @@
 
 #include <QIcon>
 #include <windows.h>
+#include <map>
+
+std::map<DWORD, int> getTcpConnectionCounts();
 
 bool terminateProcess(int pid);
 void openProcessLocation(int pid);

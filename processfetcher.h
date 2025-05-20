@@ -15,6 +15,7 @@ struct ProcessInfo {
     int threads;       // ✅ 添加线程数
     int priorityClass; // ✅ 添加优先级（原始值如 0x20）
     QIcon icon;
+    int tcpConnections = 0; //添加tcp连接数量
 };
 
 
