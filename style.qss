@@ -1,0 +1,22 @@
+QLineEdit {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 4px;
+    font-size: 14px;
+}
+
+QTableWidget {
+    border: none;
+    alternate-background-color: #f9f9f9;
+    background-color: white;
+    gridline-color: transparent;
+    font-size: 13px;
+}
+
+QHeaderView::section {
+    background-color: #e0e0e0;
+    font-weight: bold;
+    padding: 4px;
+    border: none;
+}
+
